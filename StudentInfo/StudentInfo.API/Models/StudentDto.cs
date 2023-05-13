@@ -10,6 +10,6 @@ namespace StudentInfo.API.Models
 
         public string? Address { get; set; }
 
-        public int ContactNumber { get; set; }
+        public long ContactNumber { get; set; }
     }
 }

@@ -1,34 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentInfo.API.Models;
+using System.Security.Cryptography.X509Certificates;
 
 namespace StudentInfo.API.Controllers
 {
-    //[ApiController]
-    //[Route("[controller]")]
-    //public class StudentsController : ControllerBase
-    //{
-    //    private static readonly string[] Summaries = new[]
-    //    {
-    //    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    //};
+    [ApiController]
+    [Route("api/students")]
+    public class StudentsController : ControllerBase
+    {
+        [HttpGet]
+        public ActionResult<IEnumerable<StudentDto>> GetStudentInfo()
+        {
 
-    //    private readonly ILogger<StudentsController> _logger;
+            return Ok(StudentsDataStore.Current.Students);
+        }
 
-    //    public StudentsController(ILogger<StudentsController> logger)
-    //    {
-    //        _logger = logger;
-    //    }
+        //[HttpGet("{RollNo}")]
 
-    //    [HttpGet(Name = "GetStudentInfo")]
-    //    public IEnumerable<StudentDto> Get()
-    //    {
-    //        return Enumerable.Range(1, 5).Select(index => new StudentDto
-    //        {
-    //            Date = DateTime.Now.AddDays(index),
-    //            TemperatureC = Random.Shared.Next(-20, 55),
-    //            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-    //        })
-    //        .ToArray();
-    //    }
-    //}
+        //public IEnumerable<StudentDto> Get()
+        //{
+        //    return Enumerable.Range(1, 5).Select(index => new StudentDto
+        //    {
+        //        Name = 
+        //    })
+        //    .ToArray();
+        //}
+    }
 }
