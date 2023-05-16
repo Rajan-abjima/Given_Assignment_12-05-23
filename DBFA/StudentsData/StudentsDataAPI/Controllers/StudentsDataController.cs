@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StudentsDataAPI.DbContexts;
+using StudentsDataAPI.Entities;
 using StudentsDataAPI.Models;
+using StudentsDataAPI.Profiles;
 
 namespace StudentsDataAPI.Controllers
 {
@@ -22,24 +25,24 @@ namespace StudentsDataAPI.Controllers
 
         // GET: api/StudentsData
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<StudentsDataTable>>> GetStudentsDataTables()
+        public async Task<ActionResult<IEnumerable<StudentData>>> GetStudentsDataTables()
         {
-          if (_context.StudentsDataTables == null)
+          if (_context.StudentsDataTable == null)
           {
               return NotFound();
           }
-            return await _context.StudentsDataTables.ToListAsync();
+            return await _context.StudentsDataTable.ToListAsync();
         }
 
         // GET: api/StudentsData/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<StudentsDataTable>> GetStudentsDataTable(int id)
+        public async Task<ActionResult<StudentData>> GetStudentsDataTable(int id)
         {
-          if (_context.StudentsDataTables == null)
+          if (_context.StudentsDataTable == null)
           {
               return NotFound();
           }
-            var studentsDataTable = await _context.StudentsDataTables.FindAsync(id);
+            var studentsDataTable = await _context.StudentsDataTable.FindAsync(id);
 
             if (studentsDataTable == null)
             {
@@ -80,16 +83,49 @@ namespace StudentsDataAPI.Controllers
             return NoContent();
         }
 
+        //// PATCH: api/StudentsData/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPatch("{id}")]
+        //public async Task<IActionResult> PatchStudentsDataTable(int id, StudentData studentsDataTable)
+        //{
+        //    if (id != studentsDataTable.RollNo)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    _context.Entry(studentsDataTable).State = EntityState.Modified;
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!StudentsDataTableExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    return NoContent();
+        //}
+
+
+
         // POST: api/StudentsData
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<StudentsDataTable>> PostStudentsDataTable(StudentsDataTable studentsDataTable)
+        public async Task<ActionResult<StudentData>> PostStudentsDataTable(StudentData studentsDataTable)
         {
-          if (_context.StudentsDataTables == null)
+          if (_context.StudentsDataTable == null)
           {
               return Problem("Entity set 'StudentsDataContext.StudentsDataTables'  is null.");
           }
-            _context.StudentsDataTables.Add(studentsDataTable);
+            _context.StudentsDataTable.Add(studentsDataTable);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetStudentsDataTable", new { id = studentsDataTable.RollNo }, studentsDataTable);
@@ -99,17 +135,17 @@ namespace StudentsDataAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteStudentsDataTable(int id)
         {
-            if (_context.StudentsDataTables == null)
+            if (_context.StudentsDataTable == null)
             {
                 return NotFound();
             }
-            var studentsDataTable = await _context.StudentsDataTables.FindAsync(id);
+            var studentsDataTable = await _context.StudentsDataTable.FindAsync(id);
             if (studentsDataTable == null)
             {
                 return NotFound();
             }
 
-            _context.StudentsDataTables.Remove(studentsDataTable);
+            _context.StudentsDataTable.Remove(studentsDataTable);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -117,7 +153,7 @@ namespace StudentsDataAPI.Controllers
 
         private bool StudentsDataTableExists(int id)
         {
-            return (_context.StudentsDataTables?.Any(e => e.RollNo == id)).GetValueOrDefault();
+            return (_context.StudentsDataTable?.Any(e => e.RollNo == id)).GetValueOrDefault();
         }
     }
 }

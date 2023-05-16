@@ -1,5 +1,6 @@
-using StudentsDataAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using StudentsDataAPI.DbContexts;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
