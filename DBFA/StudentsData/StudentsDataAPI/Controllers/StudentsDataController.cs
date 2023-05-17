@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml.XPath;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentsDataAPI.DbContexts;
@@ -17,20 +20,22 @@ namespace StudentsDataAPI.Controllers
     public class StudentsDataController : ControllerBase
     {
         private readonly StudentsDataContext _context;
+        private readonly IMapper _mapper;
 
-        public StudentsDataController(StudentsDataContext context)
+        public StudentsDataController(StudentsDataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/StudentsData
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StudentData>>> GetStudentsDataTables()
         {
-          if (_context.StudentsDataTable == null)
-          {
-              return NotFound();
-          }
+            if (_context.StudentsDataTable == null)
+            {
+                return NotFound();
+            }
             return await _context.StudentsDataTable.ToListAsync();
         }
 
@@ -38,10 +43,10 @@ namespace StudentsDataAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentData>> GetStudentsDataTable(int id)
         {
-          if (_context.StudentsDataTable == null)
-          {
-              return NotFound();
-          }
+            if (_context.StudentsDataTable == null)
+            {
+                return NotFound();
+            }
             var studentsDataTable = await _context.StudentsDataTable.FindAsync(id);
 
             if (studentsDataTable == null)
@@ -51,6 +56,23 @@ namespace StudentsDataAPI.Controllers
 
             return studentsDataTable;
         }
+
+        // POST: api/StudentsData
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<StudentsDataTable>> PostStudentsDataTable(StudentsDataTable studentsDataTable)
+        {
+            if (_context.StudentsDataTable == null)
+            {
+                return Problem("Entity set 'StudentsDataContext.StudentsDataTables'  is null.");
+            }
+            var students = _mapper.Map<StudentData>(studentsDataTable);
+            _context.StudentsDataTable.Add(students);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetStudentsDataTable", new { id = studentsDataTable.RollNo }, studentsDataTable);
+        }
+
 
         // PUT: api/StudentsData/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -62,7 +84,8 @@ namespace StudentsDataAPI.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(studentsDataTable).State = EntityState.Modified;
+            var students = _mapper.Map<StudentData>(studentsDataTable);
+            _context.Entry(students).State = EntityState.Modified;
 
             try
             {
@@ -86,14 +109,18 @@ namespace StudentsDataAPI.Controllers
         //// PATCH: api/StudentsData/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         //[HttpPatch("{id}")]
-        //public async Task<IActionResult> PatchStudentsDataTable(int id, StudentData studentsDataTable)
+        //public async Task<IActionResult> PatchStudentsDataTable([FromRoute] int id, [FromRoute] StudentData students, [FromBody] JsonPatchDocument jsonPatch)
         //{
-        //    if (id != studentsDataTable.RollNo)
+        //    if (id != students.RollNo)
         //    {
         //        return BadRequest();
         //    }
 
-        //    _context.Entry(studentsDataTable).State = EntityState.Modified;
+        //    var studentPatch = _mapper.Map<StudentsDataTable>(students.RollNo);
+
+        //    jsonPatch.ApplyTo(studentPatch);
+
+        //    _context.Entry(studentPatch------).State = EntityState.Modified;
 
         //    try
         //    {
@@ -116,20 +143,6 @@ namespace StudentsDataAPI.Controllers
 
 
 
-        // POST: api/StudentsData
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<StudentData>> PostStudentsDataTable(StudentData studentsDataTable)
-        {
-          if (_context.StudentsDataTable == null)
-          {
-              return Problem("Entity set 'StudentsDataContext.StudentsDataTables'  is null.");
-          }
-            _context.StudentsDataTable.Add(studentsDataTable);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetStudentsDataTable", new { id = studentsDataTable.RollNo }, studentsDataTable);
-        }
 
         // DELETE: api/StudentsData/5
         [HttpDelete("{id}")]
@@ -139,12 +152,13 @@ namespace StudentsDataAPI.Controllers
             {
                 return NotFound();
             }
-            var studentsDataTable = await _context.StudentsDataTable.FindAsync(id);
-            if (studentsDataTable == null)
+            var students = await _context.StudentsDataTable.FindAsync(id);
+            if (students == null)
             {
                 return NotFound();
             }
 
+            var studentsDataTable = _mapper.Map<StudentData>(students);
             _context.StudentsDataTable.Remove(studentsDataTable);
             await _context.SaveChangesAsync();
 
