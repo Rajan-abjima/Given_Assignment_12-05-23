@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StudentsDataAPI.DbContexts;
 using StudentsDataAPI.Profiles;
+using StudentsDataAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,8 @@ builder.Services.AddControllers()
 
 builder.Services.AddDbContext<StudentsDataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("dbconn")));
+
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

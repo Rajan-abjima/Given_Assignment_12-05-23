@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using StudentsDataAPI.Entities;
-using StudentsDataAPI.Models;
-using StudentsDataAPI.Profiles;
 
 namespace StudentsDataAPI.DbContexts
 {
