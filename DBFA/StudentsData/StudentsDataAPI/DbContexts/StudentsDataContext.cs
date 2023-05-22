@@ -3,7 +3,7 @@ using StudentsDataAPI.Entities;
 
 namespace StudentsDataAPI.DbContexts
 {
-    public partial class StudentsDataContext : DbContext
+    public class StudentsDataContext : DbContext
     {
         public StudentsDataContext()
         {
@@ -24,10 +24,6 @@ namespace StudentsDataAPI.DbContexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<StudentData>();
-
-            OnModelCreatingPartial(modelBuilder);
         }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }

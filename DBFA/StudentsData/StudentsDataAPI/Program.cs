@@ -1,11 +1,19 @@
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using StudentsDataAPI.DbContexts;
 using StudentsDataAPI.Profiles;
 using StudentsDataAPI.Services;
 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Host.UseSerilog();
+builder.Services.AddDbContext<DbContext>();
 
 builder.Services.AddControllers()
     .AddNewtonsoftJson();

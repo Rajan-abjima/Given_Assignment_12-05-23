@@ -19,22 +19,33 @@ namespace StudentsDataAPI.Services
         {
             return await _context.StudentsDataTable.ToListAsync();
         }
-
-        public Task<StudentData> AddStudentAsync(StudentData studentData)
+        public async Task<StudentData> GetStudentByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.StudentsDataTable.FindAsync(id);
         }
 
-        public Task<StudentData> DeleteStudentAsync(int id)
+        public async Task<StudentData> AddStudentAsync(StudentData studentData)
         {
-            throw new NotImplementedException();
+            _context.StudentsDataTable.Add(studentData);
+            await _context.SaveChangesAsync();
+
+            return studentData;
         }
 
-        public Task<StudentData> GetStudentByIdAsync(int id)
+        public async Task<StudentData> DeleteStudentAsync(int id)
         {
-            throw new NotImplementedException();
+            var student = await GetStudentByIdAsync(id);
+            if (student == null)
+            {
+                return student;
+            }
+
+            _context.StudentsDataTable.Remove(student);
+            await _context.SaveChangesAsync();
+
+            return student;
         }
-                
+                        
         public Task<StudentData> UpdateStudentAsync(int id, StudentData studentData)
         {
             throw new NotImplementedException();
