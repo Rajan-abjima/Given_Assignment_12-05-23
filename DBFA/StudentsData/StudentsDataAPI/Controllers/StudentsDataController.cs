@@ -25,6 +25,10 @@ namespace StudentsDataAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// This gets all the students' data from the table
+        /// </summary>
+        /// <returns>All Students</returns>
         // GET: api/StudentsData
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StudentData>>> GetAllStudentsData() 
@@ -34,6 +38,12 @@ namespace StudentsDataAPI.Controllers
             return Ok (students);
         }
 
+
+        /// <summary>
+        /// Gets the student by their IDs
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Student Details using IDs</returns>
         // GET: api/StudentsData/5
         [HttpGet("{id}")]
         public async Task<ActionResult<StudentData>> GetStudentDataById(int id)
@@ -69,7 +79,7 @@ namespace StudentsDataAPI.Controllers
         // POST: api/StudentsData
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<StudentsDataTable>> UpdateStudentData(StudentData studentData)
+        public async Task<ActionResult<StudentsDataTable>> AddStudentData(StudentData studentData)
         {
             #region k
             //if (_context.StudentsDataTable == null)
@@ -80,81 +90,78 @@ namespace StudentsDataAPI.Controllers
             //_context.StudentsDataTable.Add(students);
             #endregion
 
-            var student = _studentRepository.AddStudentAsync(studentData);
-            await _context.SaveChangesAsync();
+            await _studentRepository.AddStudentAsync(studentData);
 
-            return CreatedAtAction("GetStudentsDataTable", new { id = studentData.RollNo }, studentData);
+            var createdNewStudent = _mapper.Map<Models.StudentsDataTable>(studentData);
+
+            return Ok(createdNewStudent);
         }
 
 
-        //// PUT: api/StudentsData/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutStudentsDataTable(int id, StudentsDataTable studentsDataTable)
-        //{
-        //    if (id != studentsDataTable.RollNo)
-        //    {
-        //        return BadRequest();
-        //    }
+        // PUT: api/StudentsData/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateStudentsData([FromRoute] int id, [FromBody] StudentsDataTable studentsDataTable)
+        {
+            if (id != studentsDataTable.RollNo)
+            {
+                return BadRequest();
+            }
 
-        //    var students = _mapper.Map<StudentData>(studentsDataTable);
-        //    _context.Entry(students).State = EntityState.Modified;
+            var updatedStudent = await _studentRepository.UpdateStudentAsync(id, studentsDataTable);
+            if (updatedStudent == null)
+            {
+                return NotFound();
+            }
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!StudentsDataTableExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!StudentsDataTableExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
 
-        //// PATCH: api/StudentsData/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPatch("{id}")]
-        //public async Task<IActionResult> PatchStudentsDataTable
-        //    ([FromRoute] int id, [FromRoute] StudentData students, [FromBody] JsonPatchDocument jsonPatch)
-        //{
-        //    if (id != students.RollNo)
-        //    {
-        //        return BadRequest();
-        //    }
+        // PATCH: api/StudentsData/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchStudentsDataTable([FromRoute] int id, [FromBody] JsonPatchDocument studentPatch)
+        {            
+            var updatedStudent = await _studentRepository.UpdateStudentPatchAysnc(id, studentPatch);
+            if (updatedStudent == null)
+            {
+                return NotFound();
+            }
 
-        //    var studentPatch = _mapper.Map<StudentsDataTable>(students.RollNo);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!StudentsDataTableExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-        //    jsonPatch.ApplyTo(studentPatch);
-
-        //    _context.Entry(studentPatch------).State = EntityState.Modified;
-
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!StudentsDataTableExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
 
 

@@ -17,7 +17,6 @@ namespace StudentsDataAPI.Entities
         [MaxLength(200)]
         public string? Address { get; set; }
         [Required]
-        [MinLength(10), MaxLength(10)]
         public long ContactNumber { get; set; }
 
         public StudentData(string name)

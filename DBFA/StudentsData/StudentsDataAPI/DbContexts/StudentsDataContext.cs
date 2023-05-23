@@ -9,7 +9,7 @@ namespace StudentsDataAPI.DbContexts
         {
         }
 
-        
+
         public virtual DbSet<StudentData> StudentsDataTable { get; set; } = null!;
         public StudentsDataContext(DbContextOptions<StudentsDataContext> options)
             : base(options)
